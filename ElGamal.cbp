@@ -13,11 +13,11 @@
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-g" />
-					<Add directory="../Gmp/gmp-static-mingw-4.1 (1)/gmp/include" />
+					<Add directory="gmp-static-mingw-4.1 (1)/gmp/include" />
 				</Compiler>
 				<Linker>
 					<Add library="gmp" />
-					<Add directory="../Gmp/gmp-static-mingw-4.1 (1)/gmp/lib" />
+					<Add directory="gmp-static-mingw-4.1 (1)/gmp/lib" />
 				</Linker>
 			</Target>
 			<Target title="Release">
