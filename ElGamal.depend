@@ -1,6 +1,7 @@
 # depslib dependency file v1.0
-1577609064 source:c:\users\Ηλιάνα\desktop\current programs\elgamal\main.c
+1577612352 source:c:\users\Ηλιάνα\desktop\current programs\elgamal\main.c
 	<stdio.h>
+	<stdbool.h>
 	<time.h>
 	<math.h>
 	<stdlib.h>

@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdbool.h>
 #include <time.h>
 #include <math.h>
 #include <stdlib.h>
@@ -8,13 +9,69 @@
 int main()
 {
 
-int n=128;
+int n;
+int choice;
+bool hasChoosen=false;
 
 
-/*int n;
-printf("Give maximum bit range:");
-scanf("%d",&n);*/
 
+while(!(hasChoosen))
+{
+    printf("~~~~~Menu~~~~~\n");
+    printf("1. 64 bit\n");
+    printf("2. 128 bit\n");
+    printf("3. 256 bit\n");
+    printf("4. 512 bit\n");
+    printf("5. 1024 bit\n");
+    printf("6. 2048 bit\n");
+    printf("Choose the size of encryption numbers: ");
+    scanf("%d",&choice);
+
+    switch(choice) {
+
+    case 1:
+        n=64;
+        hasChoosen=true;
+        break;
+
+
+
+    case 2:
+        n=128;
+        hasChoosen=true;
+        break;
+
+
+    case 3:
+        n=256;
+        hasChoosen=true;
+        break;
+
+
+    case 4:
+        n=512;
+        hasChoosen=true;
+        break;
+
+
+    case 5:
+        n=1014;
+        hasChoosen=true;
+        break;
+
+
+    case 6:
+        n=2048;
+        hasChoosen=true;
+        break;
+
+
+    default :
+       printf("Sorry this is not an available option\n\n");
+
+    }
+}
+getchar();
 //~~~~~~Initializations and declarations~~~~~~~//
  mpz_t g;
  mpz_init(g);
@@ -39,25 +96,25 @@ scanf("%d",&n);*/
  gmp_randinit_default(state);
 
 
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+//~~~~~~~~~~~~~~~~~~~~~~Key Generation~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
 
 
- mpz_urandomb(g,state,n); //Random number x bit
- mpz_nextprime(g,g); //Make it prime number
+ mpz_urandomb(p,state,n); //Random number n bit
+ mpz_nextprime(p,p); //Make it prime number
 
 
- mpz_urandomb(p,state,n); //Random number x bit
+ mpz_urandomb(g,state,n); //Random number n bit
 
 
 
- while( mpz_cmp(g,p)<0)
+ while( mpz_cmp(p,g)<0) //Ensure that p is greater than g
  {
-     mpz_urandomb(p,state,n);
+     mpz_urandomb(g,state,n);
  }
 
 
+ gmp_printf("\nThe value of p is %Zd \n",p);
  gmp_printf("The value of g is %Zd \n",g);
- gmp_printf("The value of p is %Zd \n",p);
 
 
 mpz_urandomb(x,state,n);
@@ -71,57 +128,44 @@ mpz_urandomb(x,state,n);
  gmp_printf("The value of x is %Zd \n",x);
 
 
- mpz_powm(y,p,x,g);
+ mpz_powm(y,g,x,p);
 
  gmp_printf("The value of y is %Zd \n",y);
 
 
- //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Encryption~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//G
- //Dynamic allocation of mememory depanding of the input//
-
+ //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Encryption~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
 	char temp;
 	char message[50];
 	int count = 0;
-    //char message[12];
-    //strcpy(message, "Good Morning");
 
     printf("\nGive message: ");
 
     fgets(message, sizeof(message), stdin);
-    printf("%s\n",message);
 
-    while(message[count]!='\n')
+    while(message[count]!='\n') //Counting the length of the message
     {
 
         count++;
 
     }
 
-    printf("%d\n",count);
-
-
-
-
-
-    printf("count=%d\n",count);
-    printf("%s\n",message);
 
     mpz_urandomb(k,state,n);
 
-    while( mpz_cmp(g,k)<0 )
+    while( mpz_cmp(p,k)<0 ) //Ensure that p is greater than k
     {
      mpz_urandomb(k,state,n);
 
     }
 
-    gmp_printf("The value of k is %Zd \n",k);
+    gmp_printf("\nThe value of k is %Zd \n",k);
 
-    mpz_powm(c1,p,k,g);
+    mpz_powm(c1,g,k,p); //Calculate C1
 
     gmp_printf("\n\nThe value of C1 is %Zd \n",c1);
 
 
-    //~~Initialize the encrypted array~~~~//
+    //~~~~~~~~~~Initialize the encrypted array~~~~~~~~//
     int i;
     mpz_t c2[count];
 
@@ -131,9 +175,8 @@ mpz_urandomb(x,state,n);
 
 
 
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
 
-
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
 
     mpz_t temp2;
     mpz_init(temp2);
@@ -141,7 +184,7 @@ mpz_urandomb(x,state,n);
     mpz_t temp3;
     mpz_init(temp3);
 
-    mpz_powm(temp2,y,k,g); //temp2 = (y^k)mod p
+    mpz_powm(temp2,y,k,p); //temp2 = (y^k)mod p
 
     gmp_printf("\n\ntemp2 = (y^k)mod p :%Zd \n",temp2);
 
@@ -152,7 +195,7 @@ mpz_urandomb(x,state,n);
 
         mpz_mul_si(c2[i],temp2,message[i]);
 
-        gmp_printf("C2 = %Zd\n",c2[i]);
+        gmp_printf("C2[%d] = %Zd\n",i,c2[i]);
 
     }
 
@@ -161,14 +204,13 @@ mpz_urandomb(x,state,n);
 	mpz_clear(k);
 
 
-    //free(c2);
 
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
-
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
 
 
 
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Decryption~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Decryption~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
 
     mpz_t temp4;
     mpz_init(temp4);
@@ -182,25 +224,31 @@ mpz_urandomb(x,state,n);
     mpz_t temp7;
     mpz_init(temp7);
 
+    int result;
 
-    mpz_set_si(temp7,1);
+    mpz_set_si(temp7,1); //We need 1 to be a mpz variable in order to pass it to the mpz_pown() function
 
-    printf("\n");
+    printf("\nDecrypted: ");
 
-    for(i=0; i<count; i++)
+    for(i=0; i<count; i++)//We decrypt the characters one by one in order to save space
     {
 
 
-        mpz_powm(temp5,c1,x,g);
-        //gmp_printf("C2 = %Zd\n",temp5);
+        mpz_powm(temp5,c1,x,p);
+
 
         mpz_cdiv_q(temp6,c2[i],temp5);
 
-        gmp_printf("Result:%Zd\n",temp6);
+        result = mpz_get_ui (temp6);
+
+        gmp_printf("%c",result);
 
     }
 
+     printf("\n");
 
+
+//Free space needed for the mpz variables
 
     mpz_clear(temp4);
 	mpz_clear(temp5);
@@ -210,5 +258,5 @@ mpz_urandomb(x,state,n);
     for (i = 0; i < count; i++) {
     mpz_clear(c2[i]);
     }
-
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
 }
