@@ -79,33 +79,40 @@ mpz_urandomb(x,state,n);
  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Encryption~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//G
  //Dynamic allocation of mememory depanding of the input//
 
-	//char temp;
-	//char *message;
-	//message = (char*)malloc(sizeof(char));
+	char temp;
+	char message[50];
 	int count = 0;
-    char message[12];
-    strcpy(message, "Good Morning");
+    //char message[12];
+    //strcpy(message, "Good Morning");
 
-    //printf("\nGive message: ");
+    printf("\nGive message: ");
 
-	//while(temp!='\n')
-	//{
-	//	temp = getchar();
-		//message[count]=temp;
-		//count++;
-	//	message =(char*)realloc(message,count*(sizeof(char)));
+    fgets(message, sizeof(message), stdin);
+    printf("%s\n",message);
 
-	//}
+    while(message[count]!='\n')
+    {
+
+        count++;
+
+    }
+
+    printf("%d\n",count);
 
 
+
+
+
+    printf("count=%d\n",count);
+    printf("%s\n",message);
 
     mpz_urandomb(k,state,n);
 
     while( mpz_cmp(g,k)<0 )
- {
+    {
      mpz_urandomb(k,state,n);
 
- }
+    }
 
     gmp_printf("The value of k is %Zd \n",k);
 
@@ -116,8 +123,11 @@ mpz_urandomb(x,state,n);
 
     //~~Initialize the encrypted array~~~~//
     int i;
-    mpz_t c2;
-    mpz_init(c2);
+    mpz_t c2[count];
+
+    for (i = 0; i < count; i++) {
+        mpz_init2(c2[i], n);
+    }
 
 
 
@@ -136,12 +146,15 @@ mpz_urandomb(x,state,n);
     gmp_printf("\n\ntemp2 = (y^k)mod p :%Zd \n",temp2);
 
 
-
-    mpz_mul_si(c2,temp2,message[0]);
-
-    gmp_printf("C2 = %Zd\n",c2);
+    for(i=0; i<count; i++)
+    {
 
 
+        mpz_mul_si(c2[i],temp2,message[i]);
+
+        gmp_printf("C2 = %Zd\n",c2[i]);
+
+    }
 
 	mpz_clear(temp2);
 	mpz_clear(temp3);
@@ -172,15 +185,30 @@ mpz_urandomb(x,state,n);
 
     mpz_set_si(temp7,1);
 
+    printf("\n");
+
+    for(i=0; i<count; i++)
+    {
 
 
-    mpz_powm(temp5,c1,x,g);
-    gmp_printf("C2 = %Zd\n",temp5);
+        mpz_powm(temp5,c1,x,g);
+        //gmp_printf("C2 = %Zd\n",temp5);
 
-    mpz_cdiv_q(temp6,c2,temp5);
+        mpz_cdiv_q(temp6,c2[i],temp5);
 
-    gmp_printf("\n\n\nResult:%Zd\n",temp6);
+        gmp_printf("Result:%Zd\n",temp6);
+
+    }
 
 
+
+    mpz_clear(temp4);
+	mpz_clear(temp5);
+	mpz_clear(temp6);
+	mpz_clear(temp7);;
+
+    for (i = 0; i < count; i++) {
+    mpz_clear(c2[i]);
+    }
 
 }
