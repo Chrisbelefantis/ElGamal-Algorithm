@@ -2,3 +2,5 @@
 *.depend
 bin/
 obj/
+ElGamal.layout
+ElGamal.depend
