@@ -7,12 +7,13 @@ How to run:
 I made this project using CodeBlocks so I suggest you to use the same IDE to run the project.
 The important step you have to do is to connect the Library.I include the library files in the repistory.
 To include the library follow this steps:
-i. Go to Project->Build Options and at Linker settings and Add "gmp" (Without quostionmarks)
 
-ii. Go to Project->Build Options and at Search direcoties\Compiler add the Path to \include
+- Go to Project->Build Options and at Linker settings and Add "gmp" (Without quostionmarks)
+
+- Go to Project->Build Options and at Search direcoties\Compiler add the Path to \include
 folder of the library(I include it in the repository ElGamal/gmp-static-mingw-4.1 (1)/gmp/include
 
-iii. Go to Project->Build Options and at Search direcoties\Linker add the Path to \lib
+- Go to Project->Build Options and at Search direcoties\Linker add the Path to \lib
 folder of the library(I include it in the repository ElGamal/gmp-static-mingw-4.1 (1)/gmp/lib)
 
 And you are ready to run it.
